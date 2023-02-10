@@ -2,6 +2,29 @@
 const uint8_t MAX_ROWS = 8;
 const uint8_t MAX_COLS = 8;
 
+ButtonMatrix::ButtonMatrix(uint8_t cols, uint8_t rows, uint8_t *col, uint8_t *row)
+{
+	if (cols > MAX_COLS)
+	{
+		cols = MAX_COLS;
+	}
+	if (rows > MAX_ROWS)
+	{
+		rows = MAX_ROWS;
+	}
+
+	_rowCount = rows;
+	_colCount = cols;
+	_colPins = col;
+	_rowPins = row;
+}
+
+ButtonMatrix::ButtonMatrix(uint8_t cols, uint8_t rows, uint8_t *col, uint8_t *row, ButtonMatrixChanged changedCallback)
+	: ButtonMatrix(cols, rows, col, row)
+{
+	buttonChangedCallback = changedCallback;
+}
+
 void ButtonMatrix::onStateChange(uint8_t button, uint8_t pressed)
 {
 	if (buttonChangedCallback != NULL)
@@ -10,21 +33,18 @@ void ButtonMatrix::onStateChange(uint8_t button, uint8_t pressed)
 	}
 }
 
-void ButtonMatrix::begin(uint8_t cols, uint8_t rows, uint8_t *col, uint8_t *row, ButtonMatrixChanged changedcallback)
+uint16_t ButtonMatrix::numberOfButtons()
 {
-	if (cols > MAX_COLS || rows > MAX_ROWS)
-	{
-		return;
-	}
+	return _rowCount * _colCount;
+}
+
+void ButtonMatrix::begin()
+{
 
 	_debouncer.begin(10);
-	_rowCount = rows;
-	_colCount = cols;
-	_colPins = col;
-	_rowPins = row;
 
-	BitMap = new uint8_t[rows];
-	LastBitMap = new uint8_t[rows];
+	BitMap = new uint8_t[_rowCount];
+	LastBitMap = new uint8_t[_rowCount];
 
 	for (size_t x = 0; x < _rowCount; x++)
 	{
@@ -37,8 +57,6 @@ void ButtonMatrix::begin(uint8_t cols, uint8_t rows, uint8_t *col, uint8_t *row,
 	{
 		pinMode(_colPins[x], INPUT_PULLUP);
 	}
-
-	buttonChangedCallback = changedcallback;
 }
 
 void ButtonMatrix::read()
@@ -179,14 +197,14 @@ uint8_t *ButtonMatrix::buttonsPressDownStarted()
 
 		for (size_t colIndex = 0; colIndex < _colCount; colIndex++)
 		{
-			if (pressDownStarted(rowIndex, colIndex)) 
+			if (pressDownStarted(rowIndex, colIndex))
 			{
 				pressedLength++;
 			}
 		}
 	}
 
-	uint8_t* pressedButtons = new uint8_t[pressedLength];
+	uint8_t *pressedButtons = new uint8_t[pressedLength];
 	uint8_t pressedCounter = 0;
 	for (size_t rowIndex = 0; rowIndex < _rowCount; rowIndex++)
 	{
@@ -195,7 +213,7 @@ uint8_t *ButtonMatrix::buttonsPressDownStarted()
 
 		for (size_t colIndex = 0; colIndex < _colCount; colIndex++)
 		{
-			if (pressDownStarted(rowIndex, colIndex)) 
+			if (pressDownStarted(rowIndex, colIndex))
 			{
 				pressedButtons[pressedCounter] = rowIndex * colIndex;
 				pressedCounter++;
@@ -215,14 +233,14 @@ uint8_t *ButtonMatrix::buttonsPressed()
 
 		for (size_t colIndex = 0; colIndex < _colCount; colIndex++)
 		{
-			if (isPressed(rowIndex, colIndex)) 
+			if (isPressed(rowIndex, colIndex))
 			{
 				pressedLength++;
 			}
 		}
 	}
 
-	uint8_t* pressedButtons = new uint8_t[pressedLength];
+	uint8_t *pressedButtons = new uint8_t[pressedLength];
 	uint8_t pressedCounter = 0;
 	for (size_t rowIndex = 0; rowIndex < _rowCount; rowIndex++)
 	{
@@ -231,7 +249,7 @@ uint8_t *ButtonMatrix::buttonsPressed()
 
 		for (size_t colIndex = 0; colIndex < _colCount; colIndex++)
 		{
-			if (isPressed(rowIndex, colIndex)) 
+			if (isPressed(rowIndex, colIndex))
 			{
 				pressedButtons[pressedCounter] = rowIndex * colIndex;
 				pressedCounter++;
@@ -251,14 +269,14 @@ uint8_t *ButtonMatrix::buttonsReleased()
 
 		for (size_t colIndex = 0; colIndex < _colCount; colIndex++)
 		{
-			if (wasReleased(rowIndex, colIndex)) 
+			if (wasReleased(rowIndex, colIndex))
 			{
 				pressedLength++;
 			}
 		}
 	}
 
-	uint8_t* pressedButtons = new uint8_t[pressedLength];
+	uint8_t *pressedButtons = new uint8_t[pressedLength];
 	uint8_t pressedCounter = 0;
 	for (size_t rowIndex = 0; rowIndex < _rowCount; rowIndex++)
 	{
@@ -267,7 +285,7 @@ uint8_t *ButtonMatrix::buttonsReleased()
 
 		for (size_t colIndex = 0; colIndex < _colCount; colIndex++)
 		{
-			if (wasReleased(rowIndex, colIndex)) 
+			if (wasReleased(rowIndex, colIndex))
 			{
 				pressedButtons[pressedCounter] = rowIndex * colIndex;
 				pressedCounter++;

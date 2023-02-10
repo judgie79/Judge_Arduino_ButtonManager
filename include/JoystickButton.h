@@ -2,25 +2,18 @@
 #define JoystickButton_h
 
 #include "Arduino.h"
-#include "UseJoystick.h"
-
+#include "UniversalGamepadBase.h"
 #include "DebouncedButton.h"
 
-class JoystickButton : DebouncedButton
+class JoystickButton : public DebouncedButton
 {
 public:
-    JoystickButton(uint8_t pin, uint8_t pinMode);
-#ifdef __USE_JOYSTICK_
-    JoystickButton(uint8_t pin, uint8_t pinMode, Joystick_ *joystick, uint8_t buttonIndex);
-#endif
-    virtual void begin();
+    JoystickButton(uint8_t pin, uint8_t pinMode, UniversalGamepadBase *Gamepad, uint8_t buttonIndex);
     virtual void read();
     virtual void read(bool triggerOnChange);
 
 private:
-#ifdef __USE_JOYSTICK_
-    Joystick_ *joystick;
-#endif
+    UniversalGamepadBase *Gamepad;
     uint8_t buttonIndex;
 };
 

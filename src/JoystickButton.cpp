@@ -1,30 +1,23 @@
 #include "JoystickButton.h"
 
-JoystickButton::JoystickButton(uint8_t pin, uint8_t pinMode)
+JoystickButton::JoystickButton(uint8_t pin, uint8_t pinMode, UniversalGamepadBase *Gamepad, uint8_t buttonIndex)
     : DebouncedButton(pin, pinMode)
 {
-
-}
-#ifdef __USE_JOYSTICK_
-JoystickButton::JoystickButton(uint8_t pin, uint8_t pinMode, Joystick_ *joystick, uint8_t buttonIndex)
-    : DebouncedButton(pin, pinMode)
-{
-    this->joystick = joystick;
+    this->Gamepad = Gamepad;
     this->buttonIndex = buttonIndex;
 }
-#endif
 
 void JoystickButton::read()
 {
     read(true);
 }
 
-#ifdef __USE_JOYSTICK_
 void JoystickButton::read(bool triggerOnChange)
 {
     DebouncedButton::read(triggerOnChange);
-
-    joystick->setButton(buttonIndex, isPressed());
-    joystick->sendState();
+    if (isPressed()) {
+        Gamepad->press(buttonIndex);
+    } else {
+        Gamepad->release(buttonIndex);
+    }
 }
-#endif

@@ -1,27 +1,24 @@
 #include "JoystickButtonMatrix.h"
 
-JoystickButtonMatrix::JoystickButtonMatrix(uint8_t startIndex)
-  : ButtonMatrix() {
-  this->startIndex = startIndex;
+JoystickButtonMatrix::JoystickButtonMatrix(uint8_t cols, uint8_t rows, uint8_t * col, uint8_t * row, uint8_t buttonStartIndex, UniversalGamepadBase *Gamepad)
+  : ButtonMatrix(cols, rows, col, row) {
+    this->startIndex = startIndex;
+    this->Gamepad = Gamepad;
 }
 
-#ifdef __USE_JOYSTICK_
-JoystickButtonMatrix::JoystickButtonMatrix(Joystick_ *joystick, uint8_t startIndex)
-  : JoystickButtonMatrix(startIndex) {
-  this->joystick = joystick;
+JoystickButtonMatrix::JoystickButtonMatrix(uint8_t cols, uint8_t rows, uint8_t * col, uint8_t * row, uint8_t buttonStartIndex, ButtonMatrixChanged changedCallback, UniversalGamepadBase *Gamepad)
+  : ButtonMatrix(cols, rows, col, row, changedCallback) {
+    this->startIndex = startIndex;
+    this->Gamepad = Gamepad;
 }
-#endif
 
-void JoystickButtonMatrix::begin(uint8_t cols, uint8_t rows, uint8_t *col, uint8_t *row, ButtonMatrixChanged changedcallback) {
-  ButtonMatrix::begin(cols, rows, col, row, changedcallback);
-}
-void JoystickButtonMatrix::read() {
-  ButtonMatrix::read();
-}
-#ifdef __USE_JOYSTICK_
 void JoystickButtonMatrix::onStateChange(uint8_t buttonIndex, uint8_t state) {
-  joystick->setButton(buttonIndex + startIndex, state);
+
+  if (isPressed(buttonIndex)) {
+      Gamepad->press(buttonIndex + startIndex);
+  } else {
+      Gamepad->release(buttonIndex + startIndex);
+  }
 
   ButtonMatrix::onStateChange(buttonIndex + startIndex, state);
 }
-#endif
