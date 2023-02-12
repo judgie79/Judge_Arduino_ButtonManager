@@ -796,8 +796,8 @@ bool UniversalGamepad::isPressed(uint8_t b)
     {
         return Gamepad->isPressed(b);
     }
-    return false;
 #endif
+    return false;
 }
 
 bool UniversalGamepad::isConnected(void)
@@ -809,6 +809,7 @@ bool UniversalGamepad::isConnected(void)
 #elif defined(__USE_JOYSTICK_) && defined(__USE_BLE_JOYSTICK)
     return Gamepad->isConnected();
 #endif
+    return false;
 }
 
 void UniversalGamepad::resetButtons()

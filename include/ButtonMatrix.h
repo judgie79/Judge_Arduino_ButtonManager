@@ -41,8 +41,7 @@ public:
 	ButtonMatrix(uint8_t cols, uint8_t rows, uint8_t * col, uint8_t * row, ButtonMatrixChanged changedCallback);
 	virtual void begin();
 	virtual void read();
-	void print();
-	uint16_t numberOfButtons();
+	uint8_t numberOfButtons();
 	bool pressDownStarted(uint8_t button);
 	bool isPressed(uint8_t button);
 	bool wasReleased(uint8_t button);

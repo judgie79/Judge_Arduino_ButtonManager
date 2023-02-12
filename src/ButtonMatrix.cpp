@@ -33,7 +33,7 @@ void ButtonMatrix::onStateChange(uint8_t button, uint8_t pressed)
 	}
 }
 
-uint16_t ButtonMatrix::numberOfButtons()
+uint8_t ButtonMatrix::numberOfButtons()
 {
 	return _rowCount * _colCount;
 }
@@ -108,26 +108,6 @@ void ButtonMatrix::read()
 	}
 
 	return;
-}
-
-void ButtonMatrix::print()
-{
-	String output = "";
-	for (size_t rowIndex = 0; rowIndex < _rowCount; rowIndex++)
-	{
-		uint8_t row = BitMap[rowIndex];
-
-		String templ = String(rowIndex) + ":";
-		for (size_t colIndex = 0; colIndex < _colCount; colIndex++)
-		{
-
-			uint8_t isOn = (row >> colIndex) & 1;
-			templ += String(isOn);
-		}
-		templ += ",";
-
-		output += templ;
-	}
 }
 
 ButtonIndex ButtonMatrix::getRowAndColumn(uint8_t button)
